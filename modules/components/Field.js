@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import shallowCompare from 'react-addons-shallow-compare';
 import {getFieldConfig, getFieldPath, getFieldPathLabels} from "../utils/configUtils";
 import {calcTextWidth, truncateString, BUILT_IN_PLACEMENTS} from "../utils/stuff";
-import { Menu, Dropdown, Icon, Tooltip, Button, Select } from 'antd';
+import { Menu, Dropdown, Tooltip, Button, Select } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 const { Option, OptGroup } = Select;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
 const DropdownButton = Dropdown.Button;
-import { map, last, keys, toString } from 'lodash';
+import { map, last, keys, toString, isFunction, isObject } from 'lodash';
 import PureRenderMixin from 'react-addons-pure-render-mixin';
+import MixSelect from './fields/MixSelect';
 
 
 export default class Field extends Component {
@@ -136,7 +138,7 @@ export default class Field extends Component {
           <Button
               size={this.props.config.settings.renderSize || "small"}
           >
-              {btnLabel} <Icon type="down" />
+              {btnLabel} <DownOutlined />
           </Button>;
 
       if (fullLabel && fullLabel != label) {
@@ -172,29 +174,40 @@ export default class Field extends Component {
     let selectWidth = calcTextWidth(selectText, '14px');
     //let tooltip = this.curFieldOpts().label2 || selectedFieldFullLabel || this.curFieldOpts().label;
     let fieldSelectItems = this.buildSelectItems(fieldOptions);
-    let customProps = this.props.customProps || {};
+    let { fieldFactory, ...customProps } = this.props.customProps || {};
     const renderFieldAsLabel = this.props.renderFieldAsLabel;
     const fieldAddWidth = this.props.config.settings.fieldAddWidth || 48
+    const isCalcWidth = !this.props.config.settings.disableAutoWidth;
 
     if (renderFieldAsLabel && this.props.selectedField) {
-        const { showSearch, ...others } = customProps;
-        return <span {...others}>
-            {fieldDisplayLabel || this.props.selectedField || undefined}
-        </span>;
-    } else {
-        return <Select
-            dropdownAlign={dropdownPlacement ? BUILT_IN_PLACEMENTS[dropdownPlacement] : undefined}
-            dropdownMatchSelectWidth={false}
-            style={{ width: isFieldSelected && !customProps.showSearch ? null : selectWidth + fieldAddWidth }}
-            ref="field"
-            placeholder={placeholder}
-            size={this.props.config.settings.renderSize || "small"}
-            onChange={this.handleFieldSelect}
-            value={this.props.selectedField || undefined}
-            filterOption={this.filterOption}
-            {...customProps}
-        >{fieldSelectItems}</Select>;
+      const { showSearch, ...others } = customProps;
+      return <span {...others}>
+          {fieldDisplayLabel || this.props.selectedField || undefined}
+      </span>;
     }
+    const selectProps = {
+      dropdownAlign: dropdownPlacement ? BUILT_IN_PLACEMENTS[dropdownPlacement] : undefined,
+      dropdownMatchSelectWidth: false,
+      style: isCalcWidth ? { width: isFieldSelected && !customProps.showSearch ? null : selectWidth + fieldAddWidth } : {},
+      placeholder,
+      size: this.props.config.settings.renderSize || "small",
+      onChange: this.handleFieldSelect,
+      value: this.props.selectedField || undefined,
+      filterOption: this.filterOption,
+      ...customProps,
+      children: fieldSelectItems,
+    };
+    if (isFunction(fieldFactory)) {
+      return fieldFactory(selectProps, this.props);
+    }
+    if (isObject(fieldFactory)) {
+      return <MixSelect
+        config={fieldFactory}
+        selectProps={selectProps}
+        fieldProps={this.props}
+      />;
+    }
+    return <Select {...selectProps} />;
   }
 
   renderAsDropdown() {

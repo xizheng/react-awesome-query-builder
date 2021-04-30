@@ -5,7 +5,8 @@ import {
   getFieldConfig, getFieldPath, getFieldPathLabels, getValueSourcesForFieldOp, getWidgetForFieldOp
 } from "../../utils/configUtils";
 import {calcTextWidth, truncateString, BUILT_IN_PLACEMENTS} from "../../utils/stuff";
-import { Menu, Dropdown, Icon, Tooltip, Button, Select } from 'antd';
+import { Menu, Dropdown, Tooltip, Button, Select } from 'antd';
+import { EllipsisOutlined } from '@ant-design/icons';
 const { Option, OptGroup } = Select;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
@@ -140,7 +141,7 @@ export default class ValueField extends Component {
           <Button
               size={this.props.config.settings.renderSize || "small"}
           >
-              {customLabel ? customLabel : label} <Icon type="down" />
+              {customLabel ? customLabel : label} <DownOutlined />
           </Button>;
 
       if (fullLabel && fullLabel != label) {
@@ -174,12 +175,13 @@ export default class ValueField extends Component {
     let fieldSelectItems = this.buildSelectItems(fieldOptions);
     let customProps = this.props.customProps || {};
     const fieldAddWidth = this.props.config.settings.fieldAddWidth || 48
+    const isCalcWidth = !this.props.config.settings.disableAutoWidth;
 
     let fieldSelect = (
           <Select
               dropdownAlign={dropdownPlacement ? BUILT_IN_PLACEMENTS[dropdownPlacement] : undefined}
               dropdownMatchSelectWidth={false}
-              style={{ width: this.props.value ? null : placeholderWidth + fieldAddWidth }}
+              style={isCalcWidth ? { width: this.props.value ? null : placeholderWidth + fieldAddWidth } : {}}
               ref="field"
               placeholder={placeholder}
               size={this.props.config.settings.renderSize || "small"}

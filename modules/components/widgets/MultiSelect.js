@@ -55,17 +55,18 @@ export default class MultiSelectWidget extends Component {
       return (<Option key={value} value={value}>{label}</Option>);
     });
     let value = this.props.value && this.props.value.length ? this.props.value : null;
+    const isCalcWidth = !this.props.config.settings.disableAutoWidth;
 
     return (
         <Select
             mode={"multiple"}
-            style={{
+            style={isCalcWidth ? {
               minWidth: value ? null : this.placeholderWidth + 60,
               width: this.props.value ? null : this.placeholderWidth + 60,
-            }}
-            dropdownStyle={{
+            } : {}}
+            dropdownStyle={isCalcWidth ? {
               width: this.optionsMaxWidth + 60,
-            }}
+            } : {}}
             key={"widget-multiselect"}
             dropdownMatchSelectWidth={false}
             ref="val"
@@ -73,7 +74,12 @@ export default class MultiSelectWidget extends Component {
             size={size}
             value={value || undefined}  //note: (bug?) null forces placeholder to hide
             onChange={this.handleChange}
-            filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+            filterOption={(input, option) => {
+              if (option.props.children) {
+                return option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+              }
+              return undefined;
+            }}
             {...customProps}
           >{options}
         </Select>

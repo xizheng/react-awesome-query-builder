@@ -1,6 +1,6 @@
 {
-  "name": "react-query-builder-antd3",
-  "version": "0.2.39",
+  "name": "react-query-builder-antd4",
+  "version": "0.2.0",
   "main1": "modules",
   "main": "build/npm/lib",
   "main2": "build/global/ReactAwesomeQueryBuilder.js",
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "build-global": "rm -rf build/global && NODE_ENV=production webpack modules/index.js build/global/ReactAwesomeQueryBuilder.js && NODE_ENV=production COMPRESS=1 webpack modules/index.js build/global/ReactAwesomeQueryBuilder.min.js && echo \"gzipped, the global build is `gzip -c build/global/ReactAwesomeQueryBuilder.min.js | wc -c` bytes\"",
-    "build-npm": "rm -rf build/npm && babel -d build/npm/lib ./modules && cp README.md build/npm && find build/npm/lib -type d -name __tests__ | xargs rm -rf && node -p 'p=require(\"./package\");p.main=\"lib\";p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > build/npm/package.json",
+    "build-npm": "rm -rf build/npm && babel -d build/npm/lib ./modules && cp -r modules/css build/npm/lib && cp README.md build/npm && find build/npm/lib -type d -name __tests__ | xargs rm -rf && node -p 'p=require(\"./package\");p.main=\"lib\";p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > build/npm/package.json",
     "prepublish": "npm run build-npm",
     "build-examples": "cd examples && webpack --config webpack.config.js",
     "examples": "cd examples && webpack-dev-server --config webpack.config.js -d --hot --inline --display-error-details --colors --history-api-fallback --no-info --port 3001"
@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/ukrbublik/react-awesome-query-builder",
   "dependencies": {
-    "antd": "^3.13.2",
+    "antd": "^4.6.3",
     "classnames": "^2.2.6",
     "clone": "^2.1.1",
     "immutable": "^3.7.6",
@@ -49,6 +49,7 @@
     "transit-js": "^0.8.846"
   },
   "peerDependencies": {
+    "@ant-design/icons": "^4.0.0",
     "react": "^16.8.4",
     "react-addons-pure-render-mixin": "^0.14.6 || ^15.0.0 || ^16.4.1",
     "react-addons-shallow-compare": "^0.14.7 || ^15.0.0 || ^16.4.1",

@@ -4,9 +4,9 @@ import {Query, Builder, Utils} from '../../modules';
 import config from './config.sample';
 // import config from './config';
 // import '../../css/reset.less';
-import '../../css/styles.less';
-import '../../css/compact_styles.less';
-import '../../css/denormalize.less';
+// import '../../css/styles.less';
+// import '../../css/compact_styles.less';
+// import '../../css/denormalize.less';
 // import '../../css/bdh.less';
 import { fromJS } from 'immutable';
 
@@ -144,6 +144,35 @@ export default class DemoQueryBuilder extends Component {
               { ...configProps }
               get_children={this.getChildren}
               onChange={this.onChange.bind(this)}
+              fields={{
+                apple: {
+                  label: 'apple',
+                  type: 'text',
+                  group: 'fruit',
+                },
+                peach: {
+                  label: 'peach',
+                  type: 'text',
+                  group: 'fruit',
+                },
+                banana: {
+                  label: 'banana',
+                  type: 'text',
+                  group: 'fruit',
+                },
+                lsp: {
+                  label: 'lsp',
+                  type: 'text',
+                  group: 'man',
+                },
+                xz: {
+                  label: 'xz',
+                  type: 'text',
+                  group: 'man',
+                },
+              }}
+              value={fromJSON({"usedFields":["apple"],"rules":[{"id":"8a99989b-cdef-4012-b456-71791c8e74ca","field":"apple","type":"text","input":"text","operator":"eq","values":[{"type":"text","value":"1"}]}],"condition":"AND"})
+            }
             />
           </div>
       );

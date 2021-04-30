@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import shallowCompare from 'react-addons-shallow-compare';
 import {getFieldConfig, getFieldPath, getFieldPathLabels} from "../utils/configUtils";
 import {calcTextWidth, BUILT_IN_PLACEMENTS} from "../utils/stuff";
-import { Menu, Dropdown, Icon, Tooltip, Button, Select } from 'antd';
+import { Menu, Dropdown, Tooltip, Button, Select } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 const { Option, OptGroup } = Select;
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
@@ -67,7 +68,7 @@ export default class Operator extends Component {
           <Button
               size={this.props.config.settings.renderSize || "small"}
           >
-              {label} <Icon type="down" />
+              {label} <DownOutlined />
           </Button>;
 
       return toggler;
@@ -102,11 +103,13 @@ export default class Operator extends Component {
     let placeholderWidth = calcTextWidth(placeholder, '14px');
     let fieldSelectItems = this.buildSelectItems(this.operatorOptions);
     const fieldAddWidth = this.props.config.settings.fieldAddWidth || 48
+    const isCalcWidth = !this.props.config.settings.disableAutoWidth;
+
     let opSelect = (
         <Select
             dropdownAlign={dropdownPlacement ? BUILT_IN_PLACEMENTS[dropdownPlacement] : undefined}
             dropdownMatchSelectWidth={false}
-            style={{ width: this.props.selectedOperator ? null : placeholderWidth + fieldAddWidth }}
+            style={isCalcWidth ? { width: this.props.selectedOperator ? null : placeholderWidth + fieldAddWidth } : {}}
             ref="field"
             placeholder={placeholder}
             size={this.props.config.settings.renderSize || "small"}

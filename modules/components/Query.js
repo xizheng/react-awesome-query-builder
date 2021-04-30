@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { ConfigProvider } from 'antd';
 import createTreeStore from '../stores/tree';
 import {createStore} from 'redux';
 import {Provider, Connector, connect} from 'react-redux';
@@ -10,9 +11,7 @@ import {bindActionCreators} from "../utils/stuff";
 import {validateTree} from "../utils/validation";
 import {queryString} from "../utils/queryString";
 import {defaultRoot} from "../utils/defaultUtils";
-import { LocaleProvider } from 'antd';
 import Immutable from 'immutable';
-
 
 class ConnectedQuery extends Component {
     static propTypes = {
@@ -27,8 +26,8 @@ class ConnectedQuery extends Component {
         super(props);
 
         this._updateActions(props);
-
         this.validatedTree = this.validateTree(props, props.config, props.tree);
+        props.setLib({ tree: this.validatedTree })
         if (props.tree !== this.validatedTree) {
             props.onChange && props.onChange(this.validatedTree);
         }
@@ -43,6 +42,7 @@ class ConnectedQuery extends Component {
     _updateActions (props) {
       const {config, dispatch} = props;
       this.actions = bindActionCreators({...actions.tree, ...actions.group, ...actions.rule}, config, dispatch);
+      props.setLib({ actions: this.actions })
     }
 
     componentWillReceiveProps(nextProps) {
@@ -58,6 +58,7 @@ class ConnectedQuery extends Component {
         }
 
         this.validatedTree = this.validateTree(nextProps, oldConfig, oldTree);
+        this.props.setLib({tree: this.validatedTree})
         let validatedTreeChanged = oldValidatedTree !== this.validatedTree 
             && JSON.stringify(oldValidatedTree) != JSON.stringify(this.validatedTree);
         if (validatedTreeChanged) {
@@ -128,6 +129,12 @@ export default class Query extends Component {
         };
     }
 
+    lib = {}
+
+    setLib (v) {
+      Object.assign(this.lib, v)
+    }
+
     // handle case when value property changes
     componentWillReceiveProps(nextProps) {
         if (this.props.dontDispatchOnNewProps)
@@ -149,21 +156,22 @@ export default class Query extends Component {
     }
 
     render() {
-        const {conjunctions, fields, types, operators, widgets, settings, get_children, onChange, value, tree, children, ...props} = this.props;
+        const {conjunctions, fields, types, operators, widgets, settings, get_children, onChange, value, tree, children, prefixCls, ...props} = this.props;
         let config = {conjunctions, fields, types, operators, widgets, settings};
         config = extendConfig(config);
 
         return (
-            <LocaleProvider locale={config.settings.locale.antd}>
-                <Provider store={this.state.store}>
-                    <QueryContainer
-                      store={this.state.store}
-                      get_children={get_children}
-                      config={config}
-                      onChange={onChange}
-                    />
-                </Provider>
-            </LocaleProvider>
+          <ConfigProvider prefixCls={prefixCls}>
+            <Provider store={this.state.store}>
+                <QueryContainer
+                  store={this.state.store}
+                  get_children={get_children}
+                  config={config}
+                  onChange={onChange}
+                  setLib={this.setLib.bind(this)}
+                />
+            </Provider>
+          </ConfigProvider>
         )
     }
 }

@@ -45,6 +45,10 @@ export default (Rule) => {
       this.props.actions.setField(this.props.path, field);
     }
 
+    setOptions = (options) => {
+      this.props.actions.setOptions(this.props.path, options);
+    }
+
     setOperator = (operator) => {
       this.props.actions.setOperator(this.props.path, operator);
     }
@@ -107,6 +111,8 @@ export default (Rule) => {
               setField={this.dummyFn}
               setOperator={this.dummyFn}
               setOperatorOption={this.dummyFn}
+              options={this.props.options || {}}
+              setOptions={this.setOptions}
               removeSelf={this.dummyFn}
               selectedField={this.props.field || null}
               selectedOperator={this.props.operator || null}
@@ -127,6 +133,8 @@ export default (Rule) => {
               setField={this.setField}
               setOperator={this.setOperator}
               setOperatorOption={this.setOperatorOption}
+              options={this.props.options || {}}
+              setOptions={this.setOptions}
               setValue={this.setValue}
               setValueSrc={this.setValueSrc}
               selectedField={this.props.field || null}

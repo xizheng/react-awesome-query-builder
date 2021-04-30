@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
+import { DeleteOutlined } from '@ant-design/icons';
 import shallowCompare from 'react-addons-shallow-compare';
 import RuleContainer from './containers/RuleContainer';
 import Field from './Field';
 import Operator from './Operator';
 import Widget from './Widget';
 import OperatorOptions from './OperatorOptions';
-import { Row, Col, Menu, Dropdown, Icon, Tooltip, Button } from 'antd';
+import { Row, Col, Menu, Dropdown, Tooltip, Button } from 'antd';
+import { BarsOutlined, CloseCircleOutlined } from '@ant-design/icons';
 const SubMenu = Menu.SubMenu;
 const MenuItem = Menu.Item;
 const DropdownButton = Dropdown.Button;
@@ -107,11 +109,11 @@ class Rule extends Component {
                 <div className="rule--header">
                     {!this.props.config.settings.readonlyMode && (
                         this.props.config.settings.deleteLabel === null ? (
-                            <Icon type="close-circle" theme="filled" className="action--DELETE-RULE" onClick={this.props.removeSelf} size={this.props.config.settings.renderSize || "small"} />
+                            <CloseCircleOutlined className="action--DELETE-RULE" onClick={this.props.removeSelf} size={this.props.config.settings.renderSize || "small"} />
                         ) : (
                             <Button
                                 type="danger"
-                                icon="delete"
+                                icon={<DeleteOutlined />}
                                 className="action--DELETE-RULE"
                                 onClick={this.props.removeSelf}
                                 size={this.props.config.settings.renderSize || "small"}
@@ -124,7 +126,7 @@ class Rule extends Component {
                 {/*<div className="rule--body">*/}
                     {/*<Row>*/}
                         { this.props.config.settings.canReorder && this.props.treeNodesCnt > 2 &&
-                            <span className={"qb-drag-handler"} onMouseDown={this.handleDraggerMouseDown} ><Icon type="bars" /> </span>
+                            <span className={"qb-drag-handler"} onMouseDown={this.handleDraggerMouseDown} ><BarsOutlined /> </span>
                         }
                         {true ? (
                             <Col key={"fields"} className="rule--field">
@@ -136,11 +138,14 @@ class Rule extends Component {
                                     config={this.props.config}
                                     selectedField={this.props.selectedField}
                                     setField={this.props.setField}
+                                    options={this.props.options}
+                                    setOptions={this.props.setOptions}
                                     renderAsDropdown={this.props.config.settings.renderFieldAndOpAsDropdown}
                                     renderFieldAsLabel={this.props.config.settings.renderFieldAsLabel}
                                     customProps={
                                         merge(this.props.config.settings.customFieldSelectProps, {
-                                            disabled: !!this.props.config.settings.readonlyMode
+                                          disabled: !!this.props.config.settings.readonlyMode,
+                                          fieldFactory: this.props.config.settings.fieldFactory,
                                         })
                                     }
                                 />

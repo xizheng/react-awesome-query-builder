@@ -44,6 +44,14 @@ export default {
     }
   },
   fields: {
+    'multi.test': {
+      label: 'multi.test',
+      type: 'text',
+    },
+    'a.b.c': {
+      label: 'a.b.c',
+      type: 'text',
+    },
     members: {
       label: 'Members',
       type: '!struct',
@@ -154,7 +162,7 @@ export default {
             timeFormat: 'h:mm:ss A',
             use12Hours: true
           }
-        }
+        },
       }
     },
     datetime: {
@@ -231,6 +239,20 @@ export default {
     }
   },
   types: {
+    multi: {
+      widgets: {
+        multiselect: {
+          operators: ['eq', 'neq'],
+          widgetProps: {
+            customProps: {
+              mode: 'tags',
+              tokenSeparators: [','],
+              allowClear: true,
+            },
+          },
+        },
+      },
+    },
     mixin: {
       widgets: {
         text: {
@@ -795,8 +817,13 @@ export default {
       valueSrc: 'value',
       factory: (props) => <MultiSelectWidget {...props} />,
       formatValue: (vals, fieldDef, wgtDef, isForDisplay) => {
-        let valsLabels = vals.map(v => fieldDef.listValues[v])
-        return isForDisplay ? valsLabels.map(v => '\'' + v + '\'') : vals.map(v => JSON.stringify(v))
+        vals = vals || [];
+        const valsLabels = vals.map((v) =>
+          fieldDef.listValues && fieldDef.listValues[v] ? fieldDef.listValues[v] : v,
+        );
+        return isForDisplay ? valsLabels.map((v) => `'${v}'`) : vals.map((v) => JSON.stringify(v));
+        // let valsLabels = vals.map(v => fieldDef.listValues[v])
+        // return isForDisplay ? valsLabels.map(v => '\'' + v + '\'') : vals.map(v => JSON.stringify(v))
       }
     },
     date: {
@@ -863,6 +890,7 @@ export default {
       full: 'en-US',
       antd: enUS
     },
+    disableAutoWidth: false,
     maxLabelsLength: 50,
     hideConjForOne: true,
     renderSize: 'small',
@@ -877,7 +905,7 @@ export default {
     clearValueOnChangeOp: false,
     setDefaultFieldAndOp: false,
     maxNesting: 10,
-    fieldSeparator: '.',
+    fieldSeparator: '->',
     fieldSeparatorDisplay: '->',
     showLabels: false,
     valueLabel: 'Value',
@@ -890,7 +918,7 @@ export default {
     deleteLabel: null,
     addGroupLabel: 'Add group',
     addRuleLabel: 'Add rule',
-    readonlyMode: true,
+    readonlyMode: false,
     notLabel: 'Not',
     showNot: true,
     showAddGroup: true,
@@ -924,6 +952,19 @@ export default {
     canCompareFieldWithField: (leftField, leftFieldConfig, rightField, rightFieldConfig) => {
       // for type == 'select'/'multiselect' you can check listValues
       return true
-    }
+    },
+    fieldFactory: {
+      type: 'group', props: {
+        treeData: [
+          { id: 'apple', pId: 'fruit', value: 'apple', title: 'apple' },
+          { id: 'peach', pId: 'fruit', value: 'peach', title: 'peach' },
+          { id: 'banana', pId: 'fruit', value: 'banana', title: 'banana' },
+          { id: 'lsp', pId: 'man', value: 'lsp', title: 'lsp' },
+          { id: 'xz', pId: 'man', value: 'xz', title: 'xz' },
+          { id: 'man', pId: 0, value: 'man', title: 'man' },
+          { id: 'fruit', pId: 0, value: 'fruit', title: 'fruit' }
+        ],
+      }
+    },
   }
 }
